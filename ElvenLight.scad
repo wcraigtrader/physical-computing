@@ -1,4 +1,4 @@
-// layout.scad
+// ElvenLight.scad
 
 // To flag a module to generate an STL file, add '/* OUTPUT */'
 // after the module definition and before the opening brace ({).
@@ -102,8 +102,8 @@ module alignment_posts( radius=25, wall=2,height=2) {
 
 module top_orb( radius=25, wall=2) {
 	difference() {
-		orb( 35, 2 );
-		rim( 35, 2.1 );
+		orb( radius, wall );
+		rim( radius, wall+.1 );
 	}
 }
 
@@ -203,34 +203,36 @@ module door( radius=25, wall=2, thickness=2 ) {
 	}
 }
 
+// ----- Part Arrangements ----------------------------------------------------
 
+FINAL_RADIUS = 35;
+FINAL_WALL   = 2;
 
-module breakout(radius, wall) {
-	translate( [0,0,0] ) {
-		color ( "yellow" )  top_orb( radius, wall );	
-	}
-	
-	translate( [0,0,-5] ) {
-		color ("blue") inner_ring(radius, wall);
-	}
-
-	translate( [0,0,-10] ) {
-		color ("green")  ring( radius, wall );
-	}
-
-	translate( [0,0,-15] ) {
-		color ("red") door( radius, wall );
-	}
+module el_top_orb() /* OUTPUT */ {
+	top_orb( FINAL_RADIUS, FINAL_WALL );
 }
 
-// ----- Plates ---------------------------------------------------------------
+module el_inner_ring() /* OUTPUT */ {
+	inner_ring( FINAL_RADIUS, FINAL_WALL );
+}
+
+module el_outer_ring() /* OUTPUT */ {
+	ring( FINAL_RADIUS, FINAL_WALL );
+}
+
+module el_door() /* OUTPUT */ {
+	door( FINAL_RADIUS, FINAL_WALL );
+}
+
+module exploded_view(radius, wall) {
+	place( [0,0,  0], 0, "yellow" ) top_orb( radius, wall );	
+	place( [0,0, -5], 0, "blue"   ) inner_ring(radius, wall);
+	place( [0,0,-10], 0, "green"  ) ring( radius, wall );
+	place( [0,0,-15], 0, "red"    ) door( radius, wall );
+}
+
+// ----- Working area ---------------------------------------------------------
 
 tom_print_bed();
 
-breakout(35, 2);
-
-// top_orb(35,2);
-// inner_ring(35,2);
-// ring(35,2);
-// door(35, 2);
-
+exploded_view( FINAL_RADIUS, FINAL_WALL );
