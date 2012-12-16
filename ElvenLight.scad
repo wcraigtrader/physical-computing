@@ -54,7 +54,6 @@ module place( translation=[0,0,0], angle=0, hue="gold" ) {
 EPSILON = 0.1;
 THICKNESS = 1.5;
 PRECISION = 1;
-PEDASTAL  = 6;
 
 module half_sphere( radius, thickness) {
 	difference() {
@@ -80,18 +79,6 @@ module rim( size=25, wall=2 ) {
 	}
 }
 
-module screw_posts( radius=25, wall=2 ) {
-	difference() {
-		union() {
-			for ( i=[0:90:270] ) {
-				rotate( [0,0,i] ) translate( [radius-3.5,0,radius/2] ) 
-					cube( [PEDASTAL+1,PEDASTAL,radius], center=true ); 
-			}
-		}
-		half_sphere( radius+100, 100-EPSILON );
-	}
-}
-
 module alignment_posts( radius=25, wall=2,height=2) {
 	for ( i=[22.5:45:360] ) {
 		rotate( [0,0,i] )
@@ -101,9 +88,11 @@ module alignment_posts( radius=25, wall=2,height=2) {
 }
 
 module top_orb( radius=25, wall=2) {
-	difference() {
-		orb( radius, wall );
-		rim( radius, wall+.1 );
+	translate( [0,0,-wall] ) {
+		difference() {
+			orb( radius, wall );
+			rim( radius, wall+.1 );
+		}
 	}
 }
 
@@ -130,28 +119,30 @@ module ring( radius=25, wall=2 ) {
 }
 
 module inner_ring( radius=25, wall=2 ) {
-	difference() {
-
-		sphere( radius-wall, center=true );
-
-		translate( [0,0,2]) {
-			union() {
-				translate( [0,0,18.5] ) {
-					rim(radius, radius);
-				}
-				translate( [0,0,-18.5] ) {
-					rim(radius, radius);
-				}
-				for ( i=[0:45:270] ) {
-					rotate( [0,0,i] )
-						translate( [0,0,1] )
-						cube( [2*radius-10*wall,21,4], center=true ); 
+	translate( [0,0,-wall] ) {
+		difference() {
+	
+			sphere( radius-wall, center=true );
+	
+			translate( [0,0,2]) {
+				union() {
+					translate( [0,0,18.5] ) {
+						rim(radius, radius);
+					}
+					translate( [0,0,-18.5] ) {
+						rim(radius, radius);
+					}
+					for ( i=[0:45:270] ) {
+						rotate( [0,0,i] )
+							translate( [0,0,1] )
+							cube( [2*radius-10*wall,21,4], center=true ); 
+					}
 				}
 			}
-		}
-		screw_holes(radius, wall);
-		translate( [0,0,3] ) {
-			alignment_posts(radius, wall, 5);
+			screw_holes(radius, wall);
+			translate( [0,0,3] ) {
+				alignment_posts(radius, wall, 5);
+			}
 		}
 	}
 }
@@ -227,8 +218,8 @@ module el_door() /* OUTPUT */ {
 module exploded_view(radius, wall) {
 	place( [0,0,  0], 0, "yellow" ) top_orb( radius, wall );	
 	place( [0,0, -5], 0, "blue"   ) inner_ring(radius, wall);
-	place( [0,0,-10], 0, "green"  ) ring( radius, wall );
-	place( [0,0,-15], 0, "red"    ) door( radius, wall );
+	place( [0,0,-11], 0, "green"  ) ring( radius, wall );
+	place( [0,0,-17], 0, "red"    ) door( radius, wall );
 }
 
 // ----- Working area ---------------------------------------------------------
