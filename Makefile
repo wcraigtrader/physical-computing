@@ -24,6 +24,13 @@ ${BUILD}/%.stl:	${TEMP}/%.scad
 	@mkdir -p ${BUILD}
 	openscad -m make -o $@ -d $<.deps $<
 
+check:
+	echo "Minimum height for each model (should be zero):"
+	for f in ${TARGETS} ; do \
+		minz=$$(grep vertex $$f | sed 's/^ *//' | cut -d' ' -f4 | uniq | sort -nr | tail -1) ; \
+		echo "$${f} => $${minz}" ; \
+	done
+
 clean:
 	rm -f *~ ${TEMP}/*.deps ${TARGETS} ${SCADS}
 
